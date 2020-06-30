@@ -41,7 +41,7 @@ const deleteById = async (req, res, next) => {
       }
     }
     res.send(200, {
-      data: `${person.name} was successfully deleted from the server`,
+      data: `User was successfully deleted from the server`,
     });
   } catch (e) {
     console.error(e);
@@ -49,9 +49,13 @@ const deleteById = async (req, res, next) => {
   }
 };
 
-const addPerson = async (req, res, next) => {
-  const randomId = Math.floor(Math.random() * Math.floor(100000));
+const generateId = () => {
+  const maxId =
+    data.length > 0 ? Math.max(...data.map((person) => person.id)) : 0;
+  return maxId + 1;
+};
 
+const addPerson = async (req, res, next) => {
   try {
     if (data.find((person) => person.name === req.body.name)) {
       res.send(400, { error: `name must be unique` });
@@ -60,7 +64,7 @@ const addPerson = async (req, res, next) => {
         {
           name: req.body.name,
           number: req.body.number,
-          id: randomId,
+          id: generateId(),
         },
       ];
 
@@ -74,8 +78,30 @@ const addPerson = async (req, res, next) => {
           console.log("writeFile finished whitout erros...");
         }
       }
-      console.log(newData);
       res.json(newData);
+    }
+  } catch (e) {
+    console.error(e);
+    return next(e);
+  }
+};
+
+const update = async (req, res, next) => {
+  const findPerson = data.find((person) => person.name === req.body.name);
+  try {
+    if (findPerson) {
+      findPerson.number = req.body.number;
+
+      const jsonStr = JSON.stringify(data, null, 2);
+      fs.writeFile("persons.json", jsonStr, finished);
+      function finished(err) {
+        if (err) {
+          console.log("Error: " + err);
+        } else {
+          console.log("writeFile finished whitout erros...");
+        }
+      }
+      res.json(data);
     }
   } catch (e) {
     console.error(e);
@@ -87,5 +113,6 @@ personsRouter.get("/persons", getAll);
 personsRouter.get("/persons/:id", getById);
 personsRouter.delete("/persons/delete/:id/", deleteById);
 personsRouter.post("/persons/add", addPerson);
+personsRouter.put("/persons/:id", update);
 
 module.exports = personsRouter;
