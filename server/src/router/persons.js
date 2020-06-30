@@ -37,7 +37,7 @@ const deleteById = async (req, res, next) => {
       if (err) {
         console.log("Error: " + err);
       } else {
-        console.log("all gucci");
+        console.log("writeFile finished whitout erros...");
       }
     }
     res.send(200, {
@@ -71,7 +71,7 @@ const addPerson = async (req, res, next) => {
         if (err) {
           console.log("Error: " + err);
         } else {
-          console.log("all gucci");
+          console.log("writeFile finished whitout erros...");
         }
       }
       console.log(newData);
