@@ -64,7 +64,7 @@ const addPerson = async (req, res, next) => {
         },
       ];
 
-      const newData = [...data.persons].concat(newPerson);
+      const newData = [...data].concat(newPerson);
       const jsonStr = JSON.stringify(newData, null, 2);
       fs.writeFile("persons.json", jsonStr, finished);
       function finished(err) {
