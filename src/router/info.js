@@ -6,7 +6,7 @@ const infoRouter = new Router();
 const getAll = async (req, res, next) => {
   try {
     res.send(
-      `Phonebook has info for ${data.persons.length} people <br/> ${Date()}`
+      `Phonebook has info for ${data.length} people <br/> ${Date()}`
     );
   } catch (e) {
     console.error(e);
