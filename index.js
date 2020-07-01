@@ -12,13 +12,14 @@ app.use([
   cors(),
   express.urlencoded({ extended: true }),
   express.json(),
+  express.static("build"),
   morgan(":method :url :status :res[content-length] - :response-time ms :type"),
 ]);
 
 app.use("/api/v1/", personsRouter);
 app.use("/", infoRouter);
 
-const PORT = process.env.PORT || 8080
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
