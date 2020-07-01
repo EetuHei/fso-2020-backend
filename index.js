@@ -1,8 +1,8 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
-const personsRouter = require("./router/persons");
-const infoRouter = require("./router/info");
+const personsRouter = require("./src/router/persons");
+const infoRouter = require("./src/router/info");
 const app = express();
 
 morgan.token("type", function (request) {

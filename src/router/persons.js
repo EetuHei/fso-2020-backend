@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const fs = require("fs");
-const data = require("../../../persons.json");
+const data = require("../../persons.json");
 
 const personsRouter = new Router();
 

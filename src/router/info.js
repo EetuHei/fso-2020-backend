@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const data = require("../../../persons.json");
+const data = require("../../persons.json");
 
 const infoRouter = new Router();
 
