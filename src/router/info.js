@@ -1,19 +1,21 @@
 const { Router } = require("express");
-const data = require("../../persons.json");
+const Persons = require("../models/persons");
 
 const infoRouter = new Router();
 
 const getAll = async (req, res, next) => {
   try {
-    res.send(
-      `Phonebook has info for ${data.length} people <br/> ${Date()}`
-    );
+    Persons.find({}).then((result) => {
+      res.send(
+        `Phonebook has info for ${result.length} people <br/> ${Date()}`
+      );
+    });
   } catch (e) {
     console.error(e);
     return next(e);
   }
 };
 
-infoRouter.get("/", getAll);
+infoRouter.get("/info", getAll);
 
 module.exports = infoRouter;
