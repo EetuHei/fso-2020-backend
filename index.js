@@ -1,8 +1,11 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+require("dotenv").config();
+
 const personsRouter = require("./src/router/persons");
 const infoRouter = require("./src/router/info");
+
 const app = express();
 
 morgan.token("type", function (request) {
