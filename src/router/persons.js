@@ -1,12 +1,14 @@
 const { Router } = require("express");
 const fs = require("fs");
-const data = require("../../persons.json");
+const Persons = require("../models/persons");
 
 const personsRouter = new Router();
 
 const getAll = async (req, res, next) => {
   try {
-    res.json(data);
+    await Persons.find({}).then((result) => {
+      res.json(result);
+    });
   } catch (e) {
     console.error(e);
     return next(e);
@@ -15,9 +17,9 @@ const getAll = async (req, res, next) => {
 
 const getById = async (req, res, next) => {
   try {
-    const id = Number(req.params.id);
-    const person = data.find((person) => person.id === id);
-    res.json(person);
+    await Persons.findOne({ _id: req.params.id }).then((person) =>
+      res.json(person.toJSON())
+    );
   } catch (e) {
     console.error(e);
     return next(e);
@@ -49,37 +51,13 @@ const deleteById = async (req, res, next) => {
   }
 };
 
-const generateId = () => {
-  const maxId =
-    data.length > 0 ? Math.max(...data.map((person) => person.id)) : 0;
-  return maxId + 1;
-};
-
 const addPerson = async (req, res, next) => {
   try {
-    if (data.find((person) => person.name === req.body.name)) {
-      res.send(400, { error: `name must be unique` });
-    } else {
-      const newPerson = [
-        {
-          name: req.body.name,
-          number: req.body.number,
-          id: generateId(),
-        },
-      ];
-
-      const newData = [...data].concat(newPerson);
-      const jsonStr = JSON.stringify(newData, null, 2);
-      fs.writeFile("persons.json", jsonStr, finished);
-      function finished(err) {
-        if (err) {
-          console.log("Error: " + err);
-        } else {
-          console.log("writeFile finished whitout erros...");
-        }
-      }
-      res.json(newData);
-    }
+    const person = new Persons({
+      name: req.body.name,
+      number: req.body.number,
+    });
+    await person.save().then((savedPerson) => res.json(savedPerson.toJSON()));
   } catch (e) {
     console.error(e);
     return next(e);
