@@ -40,15 +40,21 @@ const deleteById = async (req, res, next) => {
 };
 
 const addPerson = async (req, res, next) => {
-  try {
-    const person = new Persons({
-      name: req.body.name,
-      number: req.body.number,
-    });
-    await person.save().then((savedPerson) => res.json(savedPerson));
-  } catch (e) {
-    console.error(e);
-    return next(e);
+  const body = req.body;
+
+  if (Persons.findOne({ name: body.name })) {
+    return res.status(400).send({ error: `${body.name} already exists` });
+  } else {
+    try {
+      const person = new Persons({
+        name: body.name,
+        number: body.number,
+      });
+      await person.save().then((savedPerson) => res.json(savedPerson));
+    } catch (e) {
+      console.error(e);
+      return next(e);
+    }
   }
 };
 
