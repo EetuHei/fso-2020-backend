@@ -1,6 +1,8 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+const httpError = require('http-errors');
+const commonResponse = require("./src/config/utils");
 require("dotenv").config();
 
 const personsRouter = require("./src/router/persons");
@@ -13,6 +15,7 @@ morgan.token("type", function (request) {
 });
 app.use([
   cors(),
+  commonResponse,
   express.urlencoded({ extended: true }),
   express.json(),
   express.static("build"),
@@ -21,6 +24,19 @@ app.use([
 
 app.use("/api/v1/", personsRouter);
 app.use("/", infoRouter);
+
+app.use((err, req, res, next) => {
+  console.error(err);
+
+  if (!err.status) {
+    const serverError = httpError(500);
+    res.error(serverError.status, serverError);
+  } else {
+    res.error(err.status, err);
+  }
+
+  return next(err);
+});
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
