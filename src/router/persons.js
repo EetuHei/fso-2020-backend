@@ -50,7 +50,7 @@ const addPerson = async (req, res, next) => {
     await person.save().then((savedPerson) => res.json(savedPerson));
   } catch (e) {
     console.error(e);
-    if (e.errors.name.properties.type == "unique") {
+    if (e.message) {
       res.send(e);
     } else {
       return next(e);
