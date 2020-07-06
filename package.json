@@ -16,7 +16,6 @@
   "author": "Eetu Heikkinen",
   "license": "ISC",
   "devDependencies": {
-    "eslint": "^7.3.1",
     "nodemon": "^2.0.4"
   },
   "dependencies": {
