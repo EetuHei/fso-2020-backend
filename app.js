@@ -1,14 +1,31 @@
 const express = require("express");
+const config = require("./src/config/config");
+const logger = require("./src/config/logger");
 const morgan = require("morgan");
 const cors = require("cors");
 const httpError = require("http-errors");
 const commonResponse = require("./src/config/utils");
 const middleware = require("./src/config/middleware");
-
+require("express-async-errors");
 const personsRouter = require("./src/router/persons");
 const infoRouter = require("./src/router/info");
 const blogRouter = require("./src/router/blog");
 const app = express();
+const mongoose = require("mongoose");
+
+logger.info("connecting to", config.MONGODB_URI);
+
+mongoose
+  .connect(config.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    logger.info("connected to MongoDB");
+  })
+  .catch((error) => {
+    logger.error("error connection to MongoDB:", error.message);
+  });
 
 morgan.token("type", function (request) {
   return JSON.stringify(request.body);
