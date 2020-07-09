@@ -40,16 +40,14 @@ app.use([
   morgan(":method :url :status :res[content-length] - :response-time ms :type"),
 ]);
 
+app.use(middleware.requestLogger, middleware.tokenExtractor);
+
 app.use("/api/v1/", personsRouter);
 app.use("/", infoRouter);
 app.use("/api/v1/", blogRouter);
-app.use("/api/v1/", authRouter)
+app.use("/api/v1/", authRouter);
 
-app.use(
-  middleware.requestLogger,
-  middleware.unknownEndpoint,
-  middleware.errorHandler
-);
+app.use(middleware.unknownEndpoint, middleware.errorHandler);
 
 app.use((err, req, res, next) => {
   console.error(err);
