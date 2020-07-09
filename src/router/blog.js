@@ -15,7 +15,10 @@ const getTokenFrom = (request) => {
 };
 
 const getAll = async (req, res, next) => {
-  const allBlogs = await Blog.find({});
+  const allBlogs = await Blog.find({}).populate("user", {
+    username: 1,
+    name: 1,
+  });
   res.json(allBlogs).end();
 };
 
@@ -26,24 +29,30 @@ const addNew = async (req, res, next) => {
   const decodedToken = jwt.verify(token, config.SECRET);
   if (!req || !decodedToken.id) {
     return res.status(401).json({ Error: "token missing on invalid" });
-  }
-
-  const user = await User.findById(decodedToken.id);
-
-  if (!body.title || !body.url) {
-    res.status(400).end();
   } else {
-    if (!body.likes) body.likes = 0;
+    const user = await User.findById(decodedToken.id);
 
-    const blog = new Blog({
-      title: body.title,
-      author: body.author,
-      url: body.url,
-      likes: body.likes,
-      user: user._id,
-    });
-    const addBlog = await blog.save();
-    res.json(addBlog.toJSON()).end();
+    if (!body.title || !body.url) {
+      res.status(400).end();
+    } else {
+      if (!body.likes) body.likes = 0;
+      
+      const blog = new Blog({
+        title: body.title,
+        author: body.author,
+        url: body.url,
+        likes: body.likes,
+        user: user._id,
+      });
+
+      const addBlog = await blog.save();
+
+      user.blogs = user.blogs.concat(addBlog._id);
+      await user.save();
+
+      await addBlog.populate("user", { username: 1, name: 1 }).execPopulate();
+      res.json(addBlog).end();
+    }
   }
 };
 
