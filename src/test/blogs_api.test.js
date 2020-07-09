@@ -4,7 +4,7 @@ const app = require("../../app");
 const Blog = require("../models/blog");
 const helper = require("./api_test_helper");
 
-const api = supertest(app)
+const api = supertest(app);
 
 beforeEach(async () => {
   await Blog.deleteMany({});
@@ -83,6 +83,7 @@ describe("addition of a new blog", () => {
     await api
       .post("/api/v1/blogs")
       .send(newBlog)
+      .set("Authorization", `bearer ${await helper.getToken()}`)
       .expect(200)
       .expect("Content-Type", /application\/json/);
 
@@ -101,7 +102,11 @@ describe("addition of a new blog", () => {
       likes: 7,
     };
 
-    await api.post("/api/v1/blogs").send(testBlog).expect(400);
+    await api
+      .post("/api/v1/blogs")
+      .send(testBlog)
+      .set("Authorization", `bearer ${await helper.getToken()}`)
+      .expect(400);
 
     const blogsAtEnd = await helper.blogsInDb();
 
@@ -118,6 +123,7 @@ describe("addition of a new blog", () => {
     const res = await api
       .post("/api/v1/blogs")
       .send(testBlog)
+      .set("Authorization", `bearer ${await helper.getToken()}`)
       .expect(200)
       .expect("Content-Type", /application\/json/);
     expect(res.body.likes).toBe(0);
