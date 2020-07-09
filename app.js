@@ -8,6 +8,7 @@ const commonResponse = require("./src/config/utils");
 const middleware = require("./src/config/middleware");
 require("express-async-errors");
 const personsRouter = require("./src/router/persons");
+const authRouter = require("./src/router/auth");
 const infoRouter = require("./src/router/info");
 const blogRouter = require("./src/router/blog");
 const app = express();
@@ -42,6 +43,7 @@ app.use([
 app.use("/api/v1/", personsRouter);
 app.use("/", infoRouter);
 app.use("/api/v1/", blogRouter);
+app.use("/api/v1/", authRouter)
 
 app.use(
   middleware.requestLogger,
