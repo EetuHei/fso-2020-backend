@@ -1,5 +1,5 @@
 const { Router } = require('express')
-const Persons = require('../models/persons')
+const Persons = require('../../models/part3/persons')
 
 const infoRouter = new Router()
 

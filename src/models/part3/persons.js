@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
-const config = require("../config/config");
-const logger = require("../config/logger");
+const config = require("../../config/config");
+const logger = require("../../config/logger");
 
 logger.info("connecting to persons mongodb", config.MONGODB_URI);
 
