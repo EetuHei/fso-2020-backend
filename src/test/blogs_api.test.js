@@ -56,7 +56,7 @@ describe("viewing a specific blog", () => {
     expect(resultBlog.body).toEqual(blogToView);
   });
 
-  test("fails with statuscode 404 if note does not exist", async () => {
+  test("fails with statuscode 404 if blog does not exist", async () => {
     const validNonexistingId = await helper.nonExistingId();
 
     console.log(validNonexistingId);
@@ -157,17 +157,31 @@ describe("update data of single blog", () => {
 
 describe("deletion of a blog", () => {
   test("succeeds with status code 204 if id is valid", async () => {
-    const blogsAtStart = await helper.blogsInDb();
-    const blogToDelete = blogsAtStart[0];
+    const newBlog = new Blog({
+      title: "testerino",
+      author: "test test",
+      url: "test.test.test",
+      likes: 1000,
+    });
 
-    await api.delete(`/api/v1/blogs/${blogToDelete.id}`).expect(204);
+    const res = await api
+      .post("/api/v1/blogs")
+      .set("Authorization", `bearer ${await helper.getToken()}`)
+      .send(newBlog)
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+
+    const blogToDelete = res.body;
+
+    await api
+      .delete(`/api/v1/blogs/${blogToDelete.id}`)
+      .set("Authorization", `bearer ${await helper.getToken()}`)
+      .expect(204);
 
     const blogsatEnd = await helper.blogsInDb();
-
-    expect(blogsatEnd).toHaveLength(helper.initialBlogs.length - 1);
+    expect(blogsatEnd).toHaveLength(helper.initialBlogs.length);
 
     const contents = blogsatEnd.map((data) => data.title);
-
     expect(contents).not.toContain(blogToDelete.title);
   });
 });
