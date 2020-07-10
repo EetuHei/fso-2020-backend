@@ -1,4 +1,4 @@
-const { Router, request } = require("express");
+const { Router } = require("express");
 const Blog = require("../models/blog");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
@@ -7,11 +7,17 @@ const config = require("../config/config");
 const blogRouter = new Router();
 
 const getAll = async (req, res, next) => {
-  const allBlogs = await Blog.find({}).populate("user", {
-    username: 1,
-    name: 1,
-  });
-  res.json(allBlogs).end();
+  const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 });
+
+  res.json(blogs.map((blog) => blog.toJSON()));
+};
+
+const getById = async (req, res, next) => {
+  const blog = await Blog.findOne({ _id: req.params.id });
+  if (!blog) {
+    return res.status(404).end();
+  }
+  return res.json(blog).end();
 };
 
 const addNew = async (req, res, next) => {
@@ -33,7 +39,7 @@ const addNew = async (req, res, next) => {
         author: body.author,
         url: body.url,
         likes: body.likes,
-        user: user._id,
+        userId: user.id,
       });
 
       const addBlog = await blog.save();
@@ -47,13 +53,20 @@ const addNew = async (req, res, next) => {
   }
 };
 
-const getById = async (req, res, next) => {
-  const findBlog = await Blog.findById({ _id: req.params.id });
-  findBlog ? res.json(findBlog.toJSON()) : res.status(404).end();
-};
-
 const deleteById = async (req, res, next) => {
-  await Blog.deleteOne({ _id: req.params.id });
+  const decodedToken = jwt.verify(req.token, config.SECRET);
+
+  if (!req.token || !decodedToken.id) {
+    return res.status(401).json({ Error: "token missing or invalid" });
+  }
+
+  const blog = await Blog.findById({ _id: req.params.id });
+
+  if (blog.userId.toString() !== decodedToken.id.toString()) {
+    return res.status(401).json({ Error: "premission denied" });
+  }
+
+  await Blog.findByIdAndRemove(req.params.id);
   res.status(204).end();
 };
 
@@ -74,8 +87,8 @@ const updateById = async (req, res, next) => {
 };
 
 blogRouter.get("/blogs", getAll);
-blogRouter.post("/blogs", addNew);
 blogRouter.get("/blogs/:id", getById);
+blogRouter.post("/blogs", addNew);
 blogRouter.delete("/blogs/:id", deleteById);
 blogRouter.put("/blogs/:id", updateById);
 
