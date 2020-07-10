@@ -7,10 +7,10 @@ const httpError = require("http-errors");
 const commonResponse = require("./src/config/utils");
 const middleware = require("./src/config/middleware");
 require("express-async-errors");
-const personsRouter = require("./src/router/persons");
-const authRouter = require("./src/router/auth");
-const infoRouter = require("./src/router/info");
-const blogRouter = require("./src/router/blog");
+const infoRouter = require("./src/router/part3/info");
+const personsRouter = require("./src/router/part3/persons");
+const authRouter = require("./src/router/part4/auth");
+const blogRouter = require("./src/router/part4/blog");
 const app = express();
 const mongoose = require("mongoose");
 
