@@ -54,11 +54,10 @@ const addNew = async (req, res, next) => {
 };
 
 const deleteById = async (req, res, next) => {
-  const decodedToken = jwt.verify(req.token, config.SECRET);
-
-  if (!req.token || !decodedToken.id) {
+  if (!req.token) {
     return res.status(401).json({ Error: "token missing or invalid" });
   }
+  const decodedToken = jwt.verify(req.token, config.SECRET);
 
   const blog = await Blog.findById({ _id: req.params.id });
 
