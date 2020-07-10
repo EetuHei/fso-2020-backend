@@ -184,6 +184,28 @@ describe("deletion of a blog", () => {
     const contents = blogsatEnd.map((data) => data.title);
     expect(contents).not.toContain(blogToDelete.title);
   });
+
+  test("error with status code 401 if token is not provided", async () => {
+    const newBlog = new Blog({
+      title: "testerino",
+      author: "test test",
+      url: "test.test.test",
+      likes: 1000,
+    });
+
+    const res = await api
+      .post("/api/v1/blogs")
+      .set("Authorization", `bearer ${await helper.getToken()}`)
+      .send(newBlog)
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+
+    const blogToDelete = res.body;
+
+    await api
+      .delete(`/api/v1/blogs/${blogToDelete.id}`)
+      .expect(401);
+  });
 });
 
 afterAll(async (done) => {
