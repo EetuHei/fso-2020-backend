@@ -1,7 +1,7 @@
 const app = require("../../app");
 const supertest = require("supertest");
 const bcrypt = require("bcrypt");
-const User = require("../models/user");
+const User = require("../models/part4/user");
 const helper = require("./api_test_helper");
 const mongoose = require("mongoose")
 

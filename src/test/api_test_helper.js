@@ -1,5 +1,5 @@
-const Blog = require("../models/blog");
-const User = require("../models/user");
+const Blog = require("../models/part4/blog");
+const User = require("../models/part4/user");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 
