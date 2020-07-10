@@ -1,8 +1,8 @@
 const { Router } = require("express");
-const Blog = require("../models/blog");
-const User = require("../models/user");
+const Blog = require("../../models/part4/blog");
+const User = require("../../models/part4/user");
 const jwt = require("jsonwebtoken");
-const config = require("../config/config");
+const config = require("../../config/config");
 
 const blogRouter = new Router();
 

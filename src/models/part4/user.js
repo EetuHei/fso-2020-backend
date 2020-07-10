@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
-const logger = require("../config/logger");
-const config = require("../config/config");
+const logger = require("../../config/logger");
+const config = require("../../config/config");
 
 const userSchema = new mongoose.Schema({
   username: { type: String, unique: true, minlength: 3, required: true },

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-const logger = require("../config/logger");
-const config = require("../config/config");
+const logger = require("../../config/logger");
+const config = require("../../config/config");
 
 const blogSchema = new mongoose.Schema({
   title: String,
