@@ -8,7 +8,6 @@ const blogRouter = new Router();
 
 const getAll = async (req, res, next) => {
   const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 });
-
   res.json(blogs.map((blog) => blog.toJSON()));
 };
 
@@ -28,9 +27,8 @@ const addNew = async (req, res, next) => {
     return res.status(401).json({ Error: "token missing on invalid" });
   } else {
     const user = await User.findById(decodedToken.id);
-
-    if (!body.title || !body.url) {
-      res.status(400).end();
+    if (!body.title || !body.url || !body.author) {
+      res.status(400).json({ error: "cannot send empty fields" }).end();
     } else {
       if (!body.likes) body.likes = 0;
 
@@ -39,16 +37,15 @@ const addNew = async (req, res, next) => {
         author: body.author,
         url: body.url,
         likes: body.likes,
-        userId: user.id,
+        user: user.id,
       });
 
       const addBlog = await blog.save();
-
       user.blogs = user.blogs.concat(addBlog._id);
       await user.save();
 
       await addBlog.populate("user", { username: 1, name: 1 }).execPopulate();
-      res.json(addBlog).end();
+      res.json(addBlog.toJSON()).end();
     }
   }
 };
@@ -61,7 +58,7 @@ const deleteById = async (req, res, next) => {
 
   const blog = await Blog.findById({ _id: req.params.id });
 
-  if (blog.userId.toString() !== decodedToken.id.toString()) {
+  if (blog.user.toString() !== decodedToken.id.toString()) {
     return res.status(401).json({ Error: "premission denied" });
   }
 
