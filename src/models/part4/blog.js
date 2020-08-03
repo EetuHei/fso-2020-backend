@@ -1,25 +1,26 @@
-const mongoose = require("mongoose");
-const logger = require("../../config/logger");
-const config = require("../../config/config");
+const mongoose = require('mongoose')
+const logger = require('../../config/logger')
+const config = require('../../config/config')
 
 const blogSchema = new mongoose.Schema({
   title: String,
   author: String,
   url: String,
   likes: Number,
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-});
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
+})
 
-blogSchema.set("toJSON", {
+blogSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
-    delete returnedObject._id;
-    delete returnedObject.__v;
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
   },
-});
+})
 
-logger.info("connecting to blogs mongodb", config.MONGODB_URI);
-mongoose.set("useFindAndModify", false);
-mongoose.set("useCreateIndex", true);
+logger.info('connecting to blogs mongodb', config.MONGODB_URI)
+mongoose.set('useFindAndModify', false)
+mongoose.set('useCreateIndex', true)
 
-module.exports = mongoose.model("Blog", blogSchema);
+module.exports = mongoose.model('Blog', blogSchema)
