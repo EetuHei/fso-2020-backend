@@ -11,7 +11,6 @@ const infoRouter = require('./src/router/part3/info')
 const personsRouter = require('./src/router/part3/persons')
 const authRouter = require('./src/router/part4/auth')
 const blogRouter = require('./src/router/part4/blog')
-const testRouter = require('./src/router/part4/test')
 const app = express()
 const mongoose = require('mongoose')
 
@@ -47,7 +46,6 @@ app.use('/api/v1/', personsRouter)
 app.use('/', infoRouter)
 app.use('/api/v1/', blogRouter)
 app.use('/api/v1/', authRouter)
-app.use('/api/v1/testing/', testRouter)
 app.use(middleware.unknownEndpoint, middleware.errorHandler)
 
 app.use((err, req, res, next) => {
